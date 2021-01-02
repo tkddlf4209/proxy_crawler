@@ -16,11 +16,11 @@ app.post('/proxy', function (req, res) {
         method: 'get',
         url:req.body.url
       }).then(function (body) {
-        res.send(body.data);
-        console.log("Success");
+        console.log("Success",req.body.url);
+        res.status(200).send(body.data);
       }).catch(function (error) {
-        res.send(error.message);
-        console.log("axios Error", error.message);
+        console.log("error",req.body.url);
+        res.status(404).send(error.message);
       })
   }
 });
