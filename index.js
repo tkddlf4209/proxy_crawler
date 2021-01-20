@@ -14,7 +14,13 @@ app.post('/proxy', function (req, res) {
   if (!!req.body.url) {
     axios({
         method: 'get',
-        url:req.body.url
+        url:req.body.url,
+        headers:{
+                  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36',
+                  'Cache-Control': 'private,no-cache, no-store, must-revalidate,max-age=0,s-maxage=0,min-fresh=0 ,proxy-revalidate, max-stale=0, post-check=0, pre-check=0',
+                  'Pragma': 'no-cache',
+                  'Expires': '-1'
+        }
       }).then(function (body) {
         console.log("Success",req.body.url);
         res.status(200).send(body.data);
