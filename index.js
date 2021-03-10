@@ -99,7 +99,7 @@ function startUpbitProjectCrawler(interval){
 var io = require('socket.io-client');
 var serverSocket;
 
-console.log(process.env);
+//console.log(process.env);
 
 const PROXY_GATEWAY_ADDRESS = "https://crawlergateway.herokuapp.com"
 const url = PROXY_GATEWAY_ADDRESS;
