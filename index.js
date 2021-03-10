@@ -44,6 +44,10 @@
 
 var axios = require('axios').default;
 var util = require('util');
+
+const TYPE_CRAWLER = 'crawler'; 
+const TYPE_BOT = 'bot';
+
 function getTimeMilis() {
   return new Date().getTime();
 }
@@ -80,14 +84,8 @@ function startUpbitProjectCrawler(interval){
          }
        }).catch(function (error) {
           console.log('error',error.response.headers["retry-after"]);
-          if(error_flag){
-            serverSocket.disconnect();
-            // serverSocket.emit('notice', {
-            //   result:'error'
-            // });
-            selfRestart();
-            error_flag= false;
-          }
+          serverSocket.disconnect();
+          selfRestart();
           
       })
     },interval,0)
@@ -115,7 +113,7 @@ var socket = io(url, {
     reconnectionDelayMax: 5000,     // maximum amount of time to wait between reconnection attempts. Each attempt increases the reconnection delay by 2x along with a randomization factor
     randomizationFactor: 0.5,
     extraHeaders: {
-      type: "crawler"
+      type: TYPE_CRAWLER
     }
 });
 
