@@ -61,7 +61,7 @@ setInterval(function(){
   if(err){
     selfRestart();
   }
-},1000)
+},1050)
 
 function startUpbitProjectCrawler(interval){
   setInterval(function(){
