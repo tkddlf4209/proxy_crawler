@@ -76,7 +76,6 @@ function startUpbitProjectCrawler(interval){
        }).then(function (body) {
          console.log(body.headers["cf-cache-status"]);
          if(serverSocket && body.headers["cf-cache-status"] == "HIT"){
-         
            serverSocket.emit('notice', {
               result:'success',
               data:body.data
@@ -85,7 +84,7 @@ function startUpbitProjectCrawler(interval){
        }).catch(function (error) {
           console.log('error',error.response.headers["retry-after"]);
           serverSocket.disconnect();
-          selfRestart();
+          //selfRestart();
           
       })
     },interval,0)
