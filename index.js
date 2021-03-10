@@ -53,13 +53,12 @@ function getTimeMilis() {
 }
 
 
-
 var flag = true;
 var time_stamp = getTimeMilis();
-var error = false;
+var err = false;
 
 setInterval(function(){
-  if(error){
+  if(err){
     selfRestart();
   }
 },1000)
@@ -93,7 +92,7 @@ function startUpbitProjectCrawler(interval){
        }).catch(function (error) {
           console.log('error',error.response.headers["retry-after"]);
           serverSocket.disconnect();
-          error = true;
+          err = true;
           
       })
     },interval,0)
@@ -157,8 +156,8 @@ socketSubscribe(socket, this);
 
 var request = require("request");
 const TOKEN = '17a48625-de4b-447c-ac52-1b2124b59878';
-async function selfRestart() {
-
+function selfRestart() {
+  console.log('selfRestart');
   request({
       url: 'https://api.heroku.com/apps/' + HEROKU_APP_NAME + '/dynos/',
       method: 'DELETE',
