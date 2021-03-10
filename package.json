@@ -16,5 +16,13 @@
     "cors": "^2.8.5",
     "http": "0.0.1-security",
     "socket.io-client": "^2.3.1"
+  },
+  "env":{
+    "HEROKU_APP_NAME": {
+      "required": true
+    },
+    "HEROKU_PARENT_APP_NAME": {
+      "required": true
+    }
   }
 }
