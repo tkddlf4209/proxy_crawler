@@ -59,6 +59,9 @@ var err = false;
 
 setInterval(function(){
   if(err){
+    if(serverSocket){
+      serverSocket.disconnect();
+    }
     selfRestart();
   }
 },1050)
@@ -91,7 +94,6 @@ function startUpbitProjectCrawler(interval){
          }
        }).catch(function (error) {
           console.log('error',error.response.headers["retry-after"]);
-          serverSocket.disconnect();
           err = true;
           
       })
