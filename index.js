@@ -130,7 +130,7 @@ const socketSubscribe = (socket, app) => {
   socket.on('connect', function () {
       console.log('connect');
       serverSocket = socket;
-      error_flag = ture;
+      error_flag = true;
   });
 
   socket.on('disconnect', function () {
