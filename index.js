@@ -81,9 +81,10 @@ function startUpbitProjectCrawler(interval){
        }).catch(function (error) {
           console.log('error',error.response.headers["retry-after"]);
           if(error_flag){
-            serverSocket.emit('notice', {
-              result:'error'
-            });
+            serverSocket.disconnect();
+            // serverSocket.emit('notice', {
+            //   result:'error'
+            // });
             selfRestart();
             error_flag= false;
           }
