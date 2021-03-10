@@ -52,9 +52,18 @@ function getTimeMilis() {
   return new Date().getTime();
 }
 
+
+
 var flag = true;
 var time_stamp = getTimeMilis();
-var error_flag = true;
+var error = false;
+
+setInterval(function(){
+  if(error){
+    selfRestart();
+  }
+},1000)
+
 function startUpbitProjectCrawler(interval){
   setInterval(function(){
     if(flag){
@@ -84,7 +93,7 @@ function startUpbitProjectCrawler(interval){
        }).catch(function (error) {
           console.log('error',error.response.headers["retry-after"]);
           serverSocket.disconnect();
-          //selfRestart();
+          error = true;
           
       })
     },interval,0)

@@ -3,4 +3,4 @@ heroku labs:enable runtime-dyno-metadata -a <app name>
 
 
 // 워크 죽이기
-heroku ps:stop worker --app craw6
+heroku ps:scale worker=0 --app craw6
