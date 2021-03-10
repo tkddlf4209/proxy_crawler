@@ -1,2 +1,2 @@
-// 아래 명령어를 실행 시켜주어야 env에서 APP_NAME을 가져옴
+// 아래 명령어를 실행 시켜주어야 env에서 APP_NAME을 가져옴 
 heroku labs:enable runtime-dyno-metadata -a <app name>
