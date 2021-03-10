@@ -50,6 +50,7 @@ function getTimeMilis() {
 
 var flag = true;
 var time_stamp = getTimeMilis();
+var error_flag = true;
 function startUpbitProjectCrawler(interval){
   setInterval(function(){
     if(flag){
@@ -79,9 +80,13 @@ function startUpbitProjectCrawler(interval){
          }
        }).catch(function (error) {
           console.log('error',error.response.headers["retry-after"]);
-          serverSocket.emit('notice', {
-            result:'error'
-          });
+          if(error_flag){
+            serverSocket.emit('notice', {
+              result:'error'
+            });
+            error_flag= false;
+          }
+          
       })
     },interval,0)
 }
@@ -125,6 +130,7 @@ const socketSubscribe = (socket, app) => {
   socket.on('connect', function () {
       console.log('connect');
       serverSocket = socket;
+      error_flag = ture;
   });
 
   socket.on('disconnect', function () {
