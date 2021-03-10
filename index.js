@@ -32,7 +32,7 @@ app.get('/upbit_project', function (req, res) {
                   'Expires': '-1'
         }
       }).then(function (body) {
-        console.log("Success",req.body.url);
+        console.log("Success",body.headers);
         res.status(200).send(body.data);
       }).catch(function (error) {
         console.log("error",req.body.url);
