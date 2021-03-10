@@ -84,6 +84,7 @@ function startUpbitProjectCrawler(interval){
             serverSocket.emit('notice', {
               result:'error'
             });
+            selfRestart();
             error_flag= false;
           }
           
@@ -147,3 +148,34 @@ const socketSubscribe = (socket, app) => {
 
 };
 socketSubscribe(socket, this);
+
+var request = require("request");
+const TOKEN = '17a48625-de4b-447c-ac52-1b2124b59878';
+async function selfRestart(socket) {
+  var appName = socket.handshake.headers.app_name;
+  if(appName == undefined){
+    console.log('appName undefined');
+    return;
+  }
+
+  if(appName == 'APP_NAME_UNDEFINED'){
+    console.log('appName APP_NAME_UNDEFINED not allowed');
+    return;
+  }
+  request({
+      url: 'https://api.heroku.com/apps/' + appName + '/dynos/',
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.heroku+json; version=3',
+        'Authorization': 'Bearer ' + TOKEN   
+      }
+    }, function (error, response, body) {
+      if(error){
+        console.log(error);
+      }
+  });
+
+}
+
+
