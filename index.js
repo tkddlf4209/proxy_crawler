@@ -56,7 +56,7 @@ var flag = true;
 var time_stamp = getTimeMilis();
 var err = false;
 
-startUpbitProjectCrawler(2500,true) // 서버가 시작되면 5초마다 실행하는 크롤러를 일단 실행하고 crawler manager에서 크롤링 요청을 하면 그떄는 빠른 크롤링을 실행
+startUpbitProjectCrawler(1800,true) // 서버가 시작되면 5초마다 실행하는 크롤러를 일단 실행하고 crawler manager에서 크롤링 요청을 하면 그떄는 빠른 크롤링을 실행
 setInterval(function(){
   if(err){
     selfRestart();
