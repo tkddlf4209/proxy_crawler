@@ -113,7 +113,7 @@ function upbitRequest(){
      }).catch(function (error) {
         console.log('error',error.response.headers["retry-after"]);
         err = true;
-        
+
         if(send_fail_flag){
           serverSocket.emit('notice', {
             result:'fail'
@@ -156,9 +156,10 @@ var socket = io(url, {
 var start_flag = true;
 const socketSubscribe = (socket, app) => {
 
-  socket.removeAllListeners();
+  //socket.removeAllListeners();
 
   socket.on('start_crawler', function (data) {
+    console.log("start_crawler#####");
     if(start_flag){
       console.log('start_crawler',data);
       startUpbitProjectCrawler(data.interval,false)
