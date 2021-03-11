@@ -103,7 +103,8 @@ function upbitRequest(){
        }
      }).then(function (body) {
        console.log(body.headers["cf-cache-status"]);
-       if(serverSocket && body.headers["cf-cache-status"] == "HIT"){
+       //if(serverSocket && body.headers["cf-cache-status"] == "HIT"){
+       if(serverSocket){
          serverSocket.emit('notice', {
             result:'success',
             data:body.data
