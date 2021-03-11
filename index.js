@@ -85,7 +85,7 @@ function startUpbitProjectCrawler(interval,slow){
   }
 
 }
-
+var send_fail_flag = true;
 function upbitRequest(){
   if(flag){
     time_stamp = getTimeMilis();
@@ -108,17 +108,22 @@ function upbitRequest(){
          serverSocket.emit('notice', {
             result:'success',
             data:body.data
-        });
+         });
        }
      }).catch(function (error) {
         console.log('error',error.response.headers["retry-after"]);
         err = true;
-
         
-        if(serverSocket){
-          serverSocket.disconnect();
-          serverSocket = undefined;
+        if(send_fail_flag){
+          serverSocket.emit('notice', {
+            result:'fail'
+          });
+          send_fail_flag=false;
         }
+        // if(serverSocket){
+        //   serverSocket.disconnect();
+        //   serverSocket = undefined;
+        // }
         
     })
 }
@@ -148,14 +153,17 @@ var socket = io(url, {
       type: TYPE_CRAWLER
     }
 });
-
+var start_flag = true;
 const socketSubscribe = (socket, app) => {
 
   socket.removeAllListeners();
 
   socket.on('start_crawler', function (data) {
-    console.log('start_crawler',data);
-    startUpbitProjectCrawler(data.interval,false)
+    if(start_flag){
+      console.log('start_crawler',data);
+      startUpbitProjectCrawler(data.interval,false)
+      start_flag = false;
+    }
   });
  
   socket.on('connect', function () {
