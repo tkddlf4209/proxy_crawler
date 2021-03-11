@@ -111,13 +111,16 @@ function upbitRequest(){
        }
      }).catch(function (error) {
         console.log('error',error.response.headers["retry-after"]);
-        err = true;
 
-        if(send_fail_flag){
-          serverSocket.emit('notice', {
-            result:'fail'
-          });
-          send_fail_flag=false;
+        if(error.response.headers["retry-after"]){
+          err = true;
+
+          if(send_fail_flag){
+            serverSocket.emit('notice', {
+              result:'fail'
+            });
+            send_fail_flag=false;
+          }
         }
         // if(serverSocket){
         //   serverSocket.disconnect();
