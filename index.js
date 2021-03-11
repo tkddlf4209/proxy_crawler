@@ -55,11 +55,11 @@ function getTimeMilis() {
 var flag = true;
 var time_stamp = getTimeMilis();
 var err = false;
-upbitRequest();
-startUpbitProjectCrawler(1800,true) // 서버가 시작되면 5초마다 실행하는 크롤러를 일단 실행하고 crawler manager에서 크롤링 요청을 하면 그떄는 빠른 크롤링을 실행
+//upbitRequest();
+//startUpbitProjectCrawler(1800,true) // 서버가 시작되면 5초마다 실행하는 크롤러를 일단 실행하고 crawler manager에서 크롤링 요청을 하면 그떄는 빠른 크롤링을 실행
 setInterval(function(){
   if(err){
-    selfRestart();
+    //selfRestart();
   }
 },1050)
 
@@ -107,7 +107,8 @@ function upbitRequest(){
        if(serverSocket){
          serverSocket.emit('notice', {
             result:'success',
-            data:body.data
+            data:body.data,
+            cache_status:body.headers["cf-cache-status"]
          });
        }
      }).catch(function (error) {
@@ -142,6 +143,7 @@ var serverSocket;
 //console.log(process.env);
 
 const PROXY_GATEWAY_ADDRESS = "https://crawlergateway.herokuapp.com"
+//const PROXY_GATEWAY_ADDRESS = "http://localhost:3000"
 const url = PROXY_GATEWAY_ADDRESS;
 const HEROKU_APP_NAME = process.env.HEROKU_APP_NAME || 'APP_NAME_UNDEFINED';
 
