@@ -78,7 +78,8 @@ function startUpbitProjectCrawler(interval){
     slow_cralwer = setInterval(function(){
       upbitRequest();
     },interval)
-
+    
+  }
 }
 var send_fail_flag = true;
 function upbitRequest(){
@@ -210,5 +211,3 @@ function selfRestart() {
   });
 
 }
-
-
