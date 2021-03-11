@@ -52,55 +52,75 @@ function getTimeMilis() {
   return new Date().getTime();
 }
 
-
 var flag = true;
 var time_stamp = getTimeMilis();
 var err = false;
 
+startUpbitProjectCrawler(5000,true) // 서버가 시작되면 5초마다 실행하는 크롤러를 일단 실행하고 crawler manager에서 크롤링 요청을 하면 그떄는 빠른 크롤링을 실행
 setInterval(function(){
   if(err){
     selfRestart();
   }
 },1050)
 
-function startUpbitProjectCrawler(interval){
-  setInterval(function(){
-    if(flag){
-      time_stamp = getTimeMilis();
-    }
-    flag = !flag;
-   
-    var url = util.format("https://project-team.upbit.com/api/v1/disclosure?region=kr&per_page=5&bitpump=%s", time_stamp)
-   
-    axios({
-         method: 'get',
-         url:url,
-         headers:{
-                   'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36',
-                   'Cache-Control': 'private,no-cache, no-store, must-revalidate,max-age=0,s-maxage=0,min-fresh=0 ,proxy-revalidate, max-stale=0, post-check=0, pre-check=0',
-                   'Pragma': 'no-cache',
-                   'Expires': '-1'
-         }
-       }).then(function (body) {
-         console.log(body.headers["cf-cache-status"]);
-         if(serverSocket && body.headers["cf-cache-status"] == "HIT"){
-           serverSocket.emit('notice', {
-              result:'success',
-              data:body.data
-          });
-         }
-       }).catch(function (error) {
-          console.log('error',error.response.headers["retry-after"]);
-          err = true;
 
-          
-          if(serverSocket){
-            serverSocket.disconnect();
-            serverSocket = undefined;
-          }
-          
-      })
-    },interval,0)
+var slow_cralwer;
+function startUpbitProjectCrawler(interval,slow){
+  if(slow){
+    console.log('#START slow cralwer#');
+    slow_cralwer = setInterval(function(){
+      upbitRequest();
+    },interval)
+  }else{
+    
+    /* later */
+    
+    console.log('#STOP slow cralwer#');
+    clearInterval(slow_cralwer); 
+
+    upbitRequest(); // start immediately once
+    setInterval(function(){
+      upbitRequest();
+    },interval)
+  }
+
+}
+
+function upbitRequest(){
+  if(flag){
+    time_stamp = getTimeMilis();
+  }
+  flag = !flag;
+  var url = util.format("https://project-team.upbit.com/api/v1/disclosure?region=kr&per_page=5&bitpump=%s", time_stamp)
+ 
+  axios({
+       method: 'get',
+       url:url,
+       headers:{
+                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36',
+                 'Cache-Control': 'private,no-cache, no-store, must-revalidate,max-age=0,s-maxage=0,min-fresh=0 ,proxy-revalidate, max-stale=0, post-check=0, pre-check=0',
+                 'Pragma': 'no-cache',
+                 'Expires': '-1'
+       }
+     }).then(function (body) {
+       console.log(body.headers["cf-cache-status"]);
+       if(serverSocket && body.headers["cf-cache-status"] == "HIT"){
+         serverSocket.emit('notice', {
+            result:'success',
+            data:body.data
+        });
+       }
+     }).catch(function (error) {
+        console.log('error',error.response.headers["retry-after"]);
+        err = true;
+
+        
+        if(serverSocket){
+          serverSocket.disconnect();
+          serverSocket = undefined;
+        }
+        
+    })
 }
 
 // var port = process.env.PORT || 3000;
@@ -135,7 +155,7 @@ const socketSubscribe = (socket, app) => {
 
   socket.on('start_crawler', function (data) {
     console.log('start_crawler',data);
-    startUpbitProjectCrawler(data.interval)
+    startUpbitProjectCrawler(data.interval,false)
   });
  
   socket.on('connect', function () {
