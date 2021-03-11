@@ -194,7 +194,8 @@ socketSubscribe(socket, this);
 var request = require("request");
 const TOKEN = '17a48625-de4b-447c-ac52-1b2124b59878';
 function selfRestart() {
-  console.log('selfRestart');
+  console.log('selfRestart','https://api.heroku.com/apps/' + HEROKU_APP_NAME + '/dynos/');
+  
   request({
       url: 'https://api.heroku.com/apps/' + HEROKU_APP_NAME + '/dynos/',
       method: 'DELETE',
