@@ -69,7 +69,7 @@ function startUpbitProjectCrawler(interval,slow){
   if(slow){
     console.log('#START slow cralwer#');
     slow_cralwer = setInterval(function(){
-      upbitRequest();
+      upbitRequest(slow);
     },interval)
   }else{
     
@@ -79,7 +79,7 @@ function startUpbitProjectCrawler(interval,slow){
 
     upbitRequest(); // start immediately once
     setInterval(function(){
-      upbitRequest();
+      upbitRequest(slow);
     },interval)
   }
 
@@ -117,7 +117,7 @@ function upbitRequest(){
         if(error.response.headers["retry-after"]){
           err = true;
 
-          if(send_fail_flag){
+          if(slow == false && send_fail_flag){ // 
             serverSocket.emit('notice', {
               result:'fail'
             });
