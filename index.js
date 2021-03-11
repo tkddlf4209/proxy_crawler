@@ -47,41 +47,19 @@ var util = require('util');
 
 const TYPE_CRAWLER = 'crawler'; 
 const TYPE_BOT = 'bot';
+const TYPE_ASSIST = 'assist';
 
 function getTimeMilis() {
   return new Date().getTime();
 }
 
+upbitRequest();
+setInterval(function(){
+  upbitRequest();
+},6000)
+
 var flag = true;
 var time_stamp = getTimeMilis();
-var err = false;
-upbitRequest();
-startUpbitProjectCrawler(1800) // 서버가 시작되면 5초마다 실행하는 크롤러를 일단 실행하고 crawler manager에서 크롤링 요청을 하면 그떄는 빠른 크롤링을 실행
-setInterval(function(){
-  if(err){
-    selfRestart();
-  }
-},1050)
-
-
-var slow_cralwer;
-function startUpbitProjectCrawler(interval){
-  if(start_crawler){ 
-    console.log('#STOP slow cralwer#');
-    clearInterval(slow_cralwer); 
-    upbitRequest(); // start immediately once
-    setInterval(function(){
-      upbitRequest();
-    },interval)
-  }else{// gateway에서 시작요청을 하지않았을 경우 
-    console.log('#START slow cralwer#');
-    slow_cralwer = setInterval(function(){
-      upbitRequest();
-    },interval)
-    
-  }
-}
-var send_fail_flag = true;
 function upbitRequest(){
   if(flag){
     time_stamp = getTimeMilis();
@@ -110,39 +88,16 @@ function upbitRequest(){
        }
      }).catch(function (error) {
         console.log('error',error.response.headers["retry-after"]);
-
-        if(error.response.headers["retry-after"]){
-          err = true;
-
-          if(start_crawler && send_fail_flag){ // 빠른 크롤로가 동작중일 겨우에만 fail 시 한번 전송
-            serverSocket.emit('notice', {
-              result:'fail'
-            });
-            send_fail_flag=false;
-          }
-        }
-        // if(serverSocket){
-        //   serverSocket.disconnect();
-        //   serverSocket = undefined;
-        // }
-        
     })
 }
-
-// var port = process.env.PORT || 3000;
-// app.listen(port, function () {
-//   console.log('Example app listening on port ', port);
-// });
 
 var io = require('socket.io-client');
 var serverSocket;
 
-//console.log(process.env);
 
 const PROXY_GATEWAY_ADDRESS = "https://crawlergateway.herokuapp.com"
 //const PROXY_GATEWAY_ADDRESS = "http://localhost:3000"
 const url = PROXY_GATEWAY_ADDRESS;
-const HEROKU_APP_NAME = process.env.HEROKU_APP_NAME || 'APP_NAME_UNDEFINED';
 
 var socket = io(url, {
     transports: ['websocket'],
@@ -152,7 +107,7 @@ var socket = io(url, {
     reconnectionDelayMax: 5000,     // maximum amount of time to wait between reconnection attempts. Each attempt increases the reconnection delay by 2x along with a randomization factor
     randomizationFactor: 0.5,
     extraHeaders: {
-      type: TYPE_CRAWLER
+      type: TYPE_ASSIST
     }
 });
 
@@ -161,19 +116,9 @@ const socketSubscribe = (socket, app) => {
 
   //socket.removeAllListeners();
 
-  socket.on('start_crawler', function (data) {
-    
-    if(!start_crawler){
-      start_crawler = true;
-      console.log("start_crawler#####",data);
-      startUpbitProjectCrawler(data.interval)
-    }
-  });
- 
   socket.on('connect', function () {
       console.log('connect');
       serverSocket = socket;
-      error_flag = true;
   });
 
   socket.on('disconnect', function () {
@@ -190,26 +135,3 @@ const socketSubscribe = (socket, app) => {
 
 };
 socketSubscribe(socket, this);
-
-var request = require("request"); 
-//const TOKEN = '17a48625-de4b-447c-ac52-1b2124b59878'; // sangil
-const TOKEN = 'b0bd0af7-a0c4-4ee1-a44e-959683188f4c'; // junjung
-
-function selfRestart() {
-  console.log('selfRestart','https://api.heroku.com/apps/' + HEROKU_APP_NAME + '/dynos/');
-  
-  request({
-      url: 'https://api.heroku.com/apps/' + HEROKU_APP_NAME + '/dynos/',
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.heroku+json; version=3',
-        'Authorization': 'Bearer ' + TOKEN   
-      }
-    }, function (error, response, body) {
-      if(error){
-        console.log(error);
-      }
-  });
-
-}
