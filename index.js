@@ -85,7 +85,7 @@ function startUpbitProjectCrawler(interval,slow){
 
 }
 var send_fail_flag = true;
-function upbitRequest(){
+function upbitRequest(slow){
   if(flag){
     time_stamp = getTimeMilis();
   }
