@@ -56,7 +56,7 @@ var flag = true;
 var time_stamp = getTimeMilis();
 var err = false;
 //upbitRequest();
-//startUpbitProjectCrawler(1800,true) // 서버가 시작되면 5초마다 실행하는 크롤러를 일단 실행하고 crawler manager에서 크롤링 요청을 하면 그떄는 빠른 크롤링을 실행
+startUpbitProjectCrawler(1800) // 서버가 시작되면 5초마다 실행하는 크롤러를 일단 실행하고 crawler manager에서 크롤링 요청을 하면 그떄는 빠른 크롤링을 실행
 setInterval(function(){
   if(err){
     selfRestart();
@@ -65,27 +65,23 @@ setInterval(function(){
 
 
 var slow_cralwer;
-function startUpbitProjectCrawler(interval,slow){
-  if(slow){
-    console.log('#START slow cralwer#');
-    slow_cralwer = setInterval(function(){
-      upbitRequest(slow);
-    },interval)
-  }else{
-    
-    /* later */
+function startUpbitProjectCrawler(interval){
+  if(start_crawler){ 
     console.log('#STOP slow cralwer#');
     clearInterval(slow_cralwer); 
-
     upbitRequest(); // start immediately once
     setInterval(function(){
-      upbitRequest(slow);
+      upbitRequest();
     },interval)
-  }
+  }else{// gateway에서 시작요청을 하지않았을 경우 
+    console.log('#START slow cralwer#');
+    slow_cralwer = setInterval(function(){
+      upbitRequest();
+    },interval)
 
 }
 var send_fail_flag = true;
-function upbitRequest(slow){
+function upbitRequest(){
   if(flag){
     time_stamp = getTimeMilis();
   }
@@ -117,7 +113,7 @@ function upbitRequest(slow){
         if(error.response.headers["retry-after"]){
           err = true;
 
-          if(slow == false && send_fail_flag){ // 
+          if(start_crawler && send_fail_flag){ // 빠른 크롤로가 동작중일 겨우에만 fail 시 한번 전송
             serverSocket.emit('notice', {
               result:'fail'
             });
@@ -158,17 +154,19 @@ var socket = io(url, {
       type: TYPE_CRAWLER
     }
 });
-var start_flag = true;
+
+var start_crawler = false;
 const socketSubscribe = (socket, app) => {
 
   //socket.removeAllListeners();
 
   socket.on('start_crawler', function (data) {
     console.log("start_crawler#####");
-    if(start_flag){
+    
+    if(start_crawler){
+      start_crawler = true;
       console.log('start_crawler',data);
-      startUpbitProjectCrawler(data.interval,false)
-      start_flag = false;
+      startUpbitProjectCrawler(data.interval)
     }
   });
  
