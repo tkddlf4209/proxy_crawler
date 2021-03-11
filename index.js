@@ -164,7 +164,7 @@ const socketSubscribe = (socket, app) => {
   socket.on('start_crawler', function (data) {
     console.log("start_crawler#####");
     
-    if(start_crawler){
+    if(!start_crawler){
       start_crawler = true;
       console.log('start_crawler',data);
       startUpbitProjectCrawler(data.interval)
