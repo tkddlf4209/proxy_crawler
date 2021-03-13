@@ -139,8 +139,8 @@ var serverSocket;
 
 //console.log(process.env);
 
-const PROXY_GATEWAY_ADDRESS = "https://crawlergateway.herokuapp.com"
-//const PROXY_GATEWAY_ADDRESS = "http://localhost:3000"
+//const PROXY_GATEWAY_ADDRESS = "https://crawlergateway.herokuapp.com"
+const PROXY_GATEWAY_ADDRESS = "http://localhost:3000"
 const url = PROXY_GATEWAY_ADDRESS;
 const HEROKU_APP_NAME = process.env.HEROKU_APP_NAME || 'APP_NAME_UNDEFINED';
 
