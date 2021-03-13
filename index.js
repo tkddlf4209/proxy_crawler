@@ -56,13 +56,18 @@ var flag = true;
 var time_stamp = getTimeMilis();
 var err = false;
 upbitRequest();
-startUpbitProjectCrawler(1800) // 서버가 시작되면 5초마다 실행하는 크롤러를 일단 실행하고 crawler manager에서 크롤링 요청을 하면 그떄는 빠른 크롤링을 실행
-setInterval(function(){
-  if(err){
-    selfRestart();
-  }
-},1050)
+var randDelay = randDelay(1000,4000);
+setTimeout(function(){ // 랜덤 딜레이 이후 실행
+  setInterval(function(){ // 1초 간격으로 프로젝트 공지 갱신
+    upbitRequest();
+  },1500)
+},randDelay);
 
+setInterval(function(){ 
+  if(err){
+    selfRestart(); // 에러발생시 재실행
+  }
+},1500)
 
 var slow_cralwer;
 function startUpbitProjectCrawler(interval){
@@ -78,7 +83,6 @@ function startUpbitProjectCrawler(interval){
     slow_cralwer = setInterval(function(){
       upbitRequest();
     },interval)
-    
   }
 }
 var send_fail_flag = true;
@@ -113,19 +117,13 @@ function upbitRequest(){
 
         if(error.response.headers["retry-after"]){
           err = true;
-
-          if(start_crawler && send_fail_flag){ // 빠른 크롤로가 동작중일 겨우에만 fail 시 한번 전송
-            serverSocket.emit('notice', {
-              result:'fail'
-            });
-            send_fail_flag=false;
-          }
+          // if(start_crawler && send_fail_flag){ // 빠른 크롤로가 동작중일 겨우에만 fail 시 한번 전송
+          //   serverSocket.emit('notice', {
+          //     result:'fail'
+          //   });
+          //   send_fail_flag=false;
+          // }
         }
-        // if(serverSocket){
-        //   serverSocket.disconnect();
-        //   serverSocket = undefined;
-        // }
-        
     })
 }
 
@@ -138,9 +136,8 @@ var io = require('socket.io-client');
 var serverSocket;
 
 //console.log(process.env);
-
-//const PROXY_GATEWAY_ADDRESS = "https://crawlergateway.herokuapp.com"
-const PROXY_GATEWAY_ADDRESS = "http://localhost:3000"
+const PROXY_GATEWAY_ADDRESS = "https://crawlergateway.herokuapp.com"
+//const PROXY_GATEWAY_ADDRESS = "http://localhost:3000"
 const url = PROXY_GATEWAY_ADDRESS;
 const HEROKU_APP_NAME = process.env.HEROKU_APP_NAME || 'APP_NAME_UNDEFINED';
 
@@ -161,14 +158,15 @@ const socketSubscribe = (socket, app) => {
 
   //socket.removeAllListeners();
 
-  socket.on('start_crawler', function (data) {
+  // socket.on('start_crawler', function (data) {
     
-    if(!start_crawler){
-      start_crawler = true;
-      console.log("start_crawler#####",data);
-      startUpbitProjectCrawler(data.interval)
-    }
-  });
+  //   if(!start_crawler){
+  //     start_crawler = true;
+  //     console.log("start_crawler#####",data);
+  //     socket.emit('start_crawler','start_crawler');
+  //     startUpbitProjectCrawler(data.interval)
+  //   }
+  // });
  
   socket.on('connect', function () {
       console.log('connect');
@@ -210,4 +208,9 @@ function selfRestart() {
       }
   });
 
+}
+
+function randDelay(start, end)
+{
+    return Math.floor((Math.random() * (end-start+1)) + start);
 }
