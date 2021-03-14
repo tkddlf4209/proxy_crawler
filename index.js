@@ -67,7 +67,7 @@ setInterval(function(){
   if(err){
     selfRestart(); // 에러발생시 재실행
   }
-},3000)
+},randDelay(4000,8000))
 
 var slow_cralwer;
 function startUpbitProjectCrawler(interval){
