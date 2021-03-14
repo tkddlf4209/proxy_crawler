@@ -56,23 +56,24 @@ var flag = true;
 var time_stamp = getTimeMilis();
 var err = false;
 upbitRequest();
-var randDelay = randDelay(500,5000);
+var crawl_delay = randDelay(500,5000);
+var restart_delay = randDelay(5000,10000);
 setTimeout(function(){ // 랜덤 딜레이 이후 실행
   setInterval(function(){ // 1초 간격으로 프로젝트 공지 갱신
     upbitRequest();
   },1000)
-},randDelay);
+},crawl_delay);
 
 setInterval(function(){ 
   if(err){
     selfRestart(); // 에러발생시 재실행
   }
-},randDelay(5000,10000))
+},restart_delay)
 
 var slow_cralwer;
 function startUpbitProjectCrawler(interval){
   if(start_crawler){ 
-    console.log('#STOP slow cralwer##');
+    console.log('#STOP slow cralwer#');
     clearInterval(slow_cralwer); 
     upbitRequest(); // start immediately once
     setInterval(function(){
