@@ -72,7 +72,7 @@ setInterval(function(){
 var slow_cralwer;
 function startUpbitProjectCrawler(interval){
   if(start_crawler){ 
-    console.log('#STOP slow cralwer#');
+    console.log('#STOP slow cralwer##');
     clearInterval(slow_cralwer); 
     upbitRequest(); // start immediately once
     setInterval(function(){
