@@ -191,7 +191,8 @@ const socketSubscribe = (socket, app) => {
 socketSubscribe(socket, this);
 
 var request = require("request");
-const TOKEN = '17a48625-de4b-447c-ac52-1b2124b59878';
+//const TOKEN = '17a48625-de4b-447c-ac52-1b2124b59878'; //sangil
+const TOKEN = 'b0bd0af7-a0c4-4ee1-a44e-959683188f4c'; //sangil
 function selfRestart() {
   console.log('selfRestart','https://api.heroku.com/apps/' + HEROKU_APP_NAME + '/dynos/');
   
