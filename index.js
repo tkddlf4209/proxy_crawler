@@ -57,18 +57,13 @@ var time_stamp = getTimeMilis();
 var err = false;
 upbitRequest();
 var crawl_delay = randDelay(500,5000);
-var restart_delay = randDelay(4000,6500);
+var restart_delay = randDelay(4000,7000);
 setTimeout(function(){ // 랜덤 딜레이 이후 실행
   setInterval(function(){ // 1초 간격으로 프로젝트 공지 갱신
     upbitRequest();
-  },1000)
+  },1200)
 },crawl_delay);
 
-setInterval(function(){ 
-  if(err){
-    selfRestart(); // 에러발생시 재실행
-  }
-},restart_delay)
 
 var slow_cralwer;
 function startUpbitProjectCrawler(interval){
@@ -117,7 +112,15 @@ function upbitRequest(){
         console.log('error',error.response.headers["retry-after"]);
 
         if(error.response.headers["retry-after"]){
-          err = true;
+          if(err == false){
+            err = true;
+            selfRestart();
+            setInterval(function(){ 
+              if(err){
+                selfRestart(); // 에러발생시 재실행
+              }
+            },10000) // 만약 앱이 재실행되지 않으면 // 10초에 한번씩 앱 재실행 
+          }
           // if(start_crawler && send_fail_flag){ // 빠른 크롤로가 동작중일 겨우에만 fail 시 한번 전송
           //   serverSocket.emit('notice', {
           //     result:'fail'
