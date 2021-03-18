@@ -82,7 +82,7 @@ function startUpbitProjectCrawler(interval){
   }else{// gateway에서 시작요청을 하지않았을 경우 
     console.log('#START slow cralwer#');
     slow_cralwer = setInterval(function(){
-      upbitRequest();
+      upbitRequest(); 
     },interval)
   }
 }
@@ -104,7 +104,7 @@ function upbitRequest(){
                  'Expires': '-1'
        }
      }).then(function (body) {
-       console.log(body.headers["cf-cache-status"]);
+      console.log(body.headers["cf-cache-status"]);
        //if(serverSocket && body.headers["cf-cache-status"] == "HIT"){
       console.log();
        if(serverSocket){
