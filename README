@@ -4,3 +4,6 @@ heroku labs:enable runtime-dyno-metadata -a <app name>
 
 // 워크 죽이기
 heroku ps:scale worker=0 --app craw6
+
+// 로그 보기
+heroku logs --tail --app <app_name>
