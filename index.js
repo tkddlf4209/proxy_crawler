@@ -104,8 +104,7 @@ function upbitRequest(){
        if(serverSocket){
          serverSocket.emit('notice', {
             result:'success',
-            data:body.data,
-            cache_status:body.headers["cf-cache-status"]
+            data:body.data
          });
        }
      }).catch(function (error) {
