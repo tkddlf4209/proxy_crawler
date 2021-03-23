@@ -61,7 +61,7 @@ var restart_delay = randDelay(4000,7000);
 setTimeout(function(){ // 랜덤 딜레이 이후 실행
   setInterval(function(){ // 1초 간격으로 프로젝트 공지 갱신
     upbitRequest();
-  },1200)
+  },1000)
 },crawl_delay);
 
 
@@ -203,6 +203,7 @@ socketSubscribe(socket, this);
 
 var request = require("request");
 const TOKEN = '17a48625-de4b-447c-ac52-1b2124b59878';
+//const TOKEN = '874aad36-8541-442c-b7b9-d5dffe2e60e6'; //jjun
 function selfRestart() {
   console.log('selfRestart','https://api.heroku.com/apps/' + HEROKU_APP_NAME + '/dynos/');
   
