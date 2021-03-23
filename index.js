@@ -82,6 +82,7 @@ function startUpbitProjectCrawler(interval){
   }
 }
 var send_fail_flag = true;
+var undefined_count = 0;
 function upbitRequest(){
   if(flag){
     time_stamp = getTimeMilis();
@@ -109,8 +110,8 @@ function upbitRequest(){
        }
      }).catch(function (error) {
         console.log('error',error.response.headers["retry-after"]);
-
         if(error.response.headers["retry-after"]){
+          undefined_count = 0;
           if(err == false){
             err = true;
             selfRestart();
@@ -120,12 +121,20 @@ function upbitRequest(){
               }
             },10000) // 만약 앱이 재실행되지 않으면 // 10초에 한번씩 앱 재실행 
           }
-          // if(start_crawler && send_fail_flag){ // 빠른 크롤로가 동작중일 겨우에만 fail 시 한번 전송
-          //   serverSocket.emit('notice', {
-          //     result:'fail'
-          //   });
-          //   send_fail_flag=false;
-          // }
+        }else{
+          undefined_count++;
+          if(undefined_count>5){
+              if(err == false){
+                err = true;
+                selfRestart();
+                setInterval(function(){ 
+                  if(err){
+                    selfRestart(); // 에러발생시 재실행
+                  }
+                },10000) // 만약 앱이 재실행되지 않으면 // 10초에 한번씩 앱 재실행 
+              }
+          }
+          
         }
     })
 }
