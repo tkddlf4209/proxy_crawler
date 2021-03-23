@@ -42,7 +42,7 @@
 //   //}
 // });
 
-var axios = require('axios').default; 
+var axios = require('axios').default;
 var util = require('util');
 
 const TYPE_CRAWLER = 'crawler'; 
@@ -57,18 +57,13 @@ var time_stamp = getTimeMilis();
 var err = false;
 upbitRequest();
 var crawl_delay = randDelay(500,5000);
-var restart_delay = randDelay(3000,5000);
+var restart_delay = randDelay(4000,7000);
 setTimeout(function(){ // 랜덤 딜레이 이후 실행
   setInterval(function(){ // 1초 간격으로 프로젝트 공지 갱신
     upbitRequest();
   },1000)
 },crawl_delay);
 
-setInterval(function(){ 
-  if(err){
-    selfRestart(); // 에러발생시 재실행
-  }
-},restart_delay)
 
 var slow_cralwer;
 function startUpbitProjectCrawler(interval){
@@ -82,16 +77,17 @@ function startUpbitProjectCrawler(interval){
   }else{// gateway에서 시작요청을 하지않았을 경우 
     console.log('#START slow cralwer#');
     slow_cralwer = setInterval(function(){
-      upbitRequest(); 
+      upbitRequest();
     },interval)
   }
 }
 var send_fail_flag = true;
+var undefined_count = 0;
 function upbitRequest(){
   if(flag){
     time_stamp = getTimeMilis();
   }
-  flag = !flag; 
+  flag = !flag;
   var url = util.format("https://project-team.upbit.com/api/v1/disclosure?region=kr&per_page=20&bitpump=%s", time_stamp)
  
   axios({
@@ -104,7 +100,7 @@ function upbitRequest(){
                  'Expires': '-1'
        }
      }).then(function (body) {
-      console.log(body.headers["cf-cache-status"]);
+       console.log(body.headers["cf-cache-status"]);
        //if(serverSocket && body.headers["cf-cache-status"] == "HIT"){
        if(serverSocket){
          serverSocket.emit('notice', {
@@ -114,15 +110,31 @@ function upbitRequest(){
        }
      }).catch(function (error) {
         console.log('error',error.response.headers["retry-after"]);
-
         if(error.response.headers["retry-after"]){
-          err = true;
-          // if(start_crawler && send_fail_flag){ // 빠른 크롤로가 동작중일 겨우에만 fail 시 한번 전송
-          //   serverSocket.emit('notice', {
-          //     result:'fail'
-          //   });
-          //   send_fail_flag=false;
-          // }
+          undefined_count = 0;
+          if(err == false){
+            err = true;
+            selfRestart();
+            setInterval(function(){ 
+              if(err){
+                selfRestart(); // 에러발생시 재실행
+              }
+            },10000) // 만약 앱이 재실행되지 않으면 // 10초에 한번씩 앱 재실행 
+          }
+        }else{
+          undefined_count++;
+          if(undefined_count>5){
+              if(err == false){
+                err = true;
+                selfRestart();
+                setInterval(function(){ 
+                  if(err){
+                    selfRestart(); // 에러발생시 재실행
+                  }
+                },10000) // 만약 앱이 재실행되지 않으면 // 10초에 한번씩 앱 재실행 
+              }
+          }
+          
         }
     })
 }
@@ -190,9 +202,8 @@ const socketSubscribe = (socket, app) => {
 socketSubscribe(socket, this);
 
 var request = require("request");
-//const TOKEN = '17a48625-de4b-447c-ac52-1b2124b59878'; //sangil
+//const TOKEN = '17a48625-de4b-447c-ac52-1b2124b59878'; // ssang
 const TOKEN = '874aad36-8541-442c-b7b9-d5dffe2e60e6'; //jjun
-console.log("TOKEN",TOKEN);
 function selfRestart() {
   console.log('selfRestart','https://api.heroku.com/apps/' + HEROKU_APP_NAME + '/dynos/');
   
