@@ -60,9 +60,9 @@ function upbitRequest(){
        }
      }).then(function (body) {
        console.log(body.headers["cf-cache-status"]);
-       if(cache !== error.response.headers["retry-after"]){
+       if(cache !== body.headers["retry-after"]){
             flag= true;
-            cache = error.response.headers["retry-after"];
+            cache = body.headers["retry-after"];
        }
        //if(serverSocket && body.headers["cf-cache-status"] == "HIT"){
        if(serverSocket){
