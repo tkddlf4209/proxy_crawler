@@ -84,10 +84,11 @@ function startUpbitProjectCrawler(interval){
 var send_fail_flag = true;
 var undefined_count = 0;
 function upbitRequest(){
-  if(flag){
-    time_stamp = getTimeMilis();
-  }
-  flag = !flag;
+  time_stamp = getTimeMilis();
+//   if(flag){
+//     time_stamp = getTimeMilis();
+//   }
+//   flag = !flag;
   var url = util.format("https://project-team.upbit.com/api/v1/disclosure?region=kr&per_page=20&bitpump=%s", time_stamp)
  
   axios({
