@@ -61,7 +61,7 @@ var restart_delay = randDelay(4000,7000);
 setTimeout(function(){ // 랜덤 딜레이 이후 실행
   setInterval(function(){ // 1초 간격으로 프로젝트 공지 갱신
     upbitRequest();
-  },500)
+  },800)
 },crawl_delay);
 
 
