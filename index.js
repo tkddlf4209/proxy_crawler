@@ -59,7 +59,7 @@ function upbitRequest(){
                  'Expires': '-1'
        }
      }).then(function (body) {
-       console.log(body.headers["cf-cache-status"]);
+       console.log(body.headers["cf-cache-status"],cache);
        if(body.headers["retry-after"]){
           if(cache != body.headers["retry-after"]){
             flag= true;   
