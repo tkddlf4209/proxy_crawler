@@ -44,7 +44,7 @@ function upbitRequest(){
   if(flag){
     time_stamp = getTimeMilis();
     flag = false;
-    console.log('[UPDATE] URL timestmap : ',time_stamp);
+    //console.log('[UPDATE] URL timestmap : ',time_stamp);
   }
   //flag = !flag;
   var url = util.format("https://project-team.upbit.com/api/v1/disclosure?region=kr&per_page=20&bitpump=%s", time_stamp)
