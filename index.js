@@ -38,7 +38,7 @@ function startUpbitProjectCrawler(interval){
 var send_fail_flag = true;
 var undefined_count = 0;
 var flag = true;
-var cache = undefined;
+var cache = "MISS";
 var time_stamp = getTimeMilis();
 function upbitRequest(){
   if(flag){
@@ -70,9 +70,8 @@ function upbitRequest(){
      }).catch(function (error) {
         console.log('error',error.response.headers["retry-after"]);
         if(error.response.headers["retry-after"]){
-          if(cache && cache !== error.response.headers["retry-after"]){
+          if(cache !== error.response.headers["retry-after"]){
             flag= true;
-          }else{
             cache = error.response.headers["retry-after"];
           }
           undefined_count = 0;
