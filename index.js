@@ -41,11 +41,11 @@ var flag = true;
 var cache = "MISS";
 var time_stamp = getTimeMilis();
 function upbitRequest(){
-  if(flag){
-    time_stamp = getTimeMilis();
-    flag = false;
-    //console.log('[UPDATE] URL timestmap : ',time_stamp);
-  }
+  time_stamp = getTimeMilis();
+//   if(flag){
+//     time_stamp = getTimeMilis();
+//     flag = false;
+//   }
   //flag = !flag;
   var url = util.format("https://project-team.upbit.com/api/v1/disclosure?region=kr&per_page=20&bitpump=%s", time_stamp)
  
@@ -60,12 +60,12 @@ function upbitRequest(){
        }
      }).then(function (body) {
        console.log(body.headers["cf-cache-status"]);
-       if(body.headers["cf-cache-status"]){
-          if(cache != body.headers["cf-cache-status"]){
-            flag= true;   
-          }
-          cache = body.headers["cf-cache-status"]
-       }
+//        if(body.headers["cf-cache-status"]){
+//           if(cache != body.headers["cf-cache-status"]){
+//             flag= true;   
+//           }
+//           cache = body.headers["cf-cache-status"]
+//        }
       
        //if(serverSocket && body.headers["cf-cache-status"] == "HIT"){
        if(serverSocket){
