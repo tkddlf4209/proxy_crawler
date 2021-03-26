@@ -70,7 +70,7 @@ function upbitRequest(){
      }).catch(function (error) {
         console.log('error',error.response.headers["retry-after"]);
         if(error.response.headers["retry-after"]){
-          if(cache !== error.response.headers["retry-after"]){
+          if(cache != error.response.headers["retry-after"]){
             flag= true;
             cache = error.response.headers["retry-after"];
           }
