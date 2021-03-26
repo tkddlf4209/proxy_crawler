@@ -44,7 +44,7 @@ function upbitRequest(){
   if(flag){
     time_stamp = getTimeMilis();
     flag = false;
-    console.log('flag@@ ',time_stamp);
+    console.log('[UPDATE] URL timestmap : ',time_stamp);
   }
   //flag = !flag;
   var url = util.format("https://project-team.upbit.com/api/v1/disclosure?region=kr&per_page=20&bitpump=%s", time_stamp)
@@ -59,10 +59,9 @@ function upbitRequest(){
                  'Expires': '-1'
        }
      }).then(function (body) {
-       console.log(body.headers["cf-cache-status"],cache);
+       console.log(body.headers["cf-cache-status"]);
        if(body.headers["cf-cache-status"]){
           if(cache != body.headers["cf-cache-status"]){
-            
             flag= true;   
           }
           cache = body.headers["cf-cache-status"]
