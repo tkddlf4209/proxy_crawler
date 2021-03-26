@@ -60,6 +60,10 @@ function upbitRequest(){
        }
      }).then(function (body) {
        console.log(body.headers["cf-cache-status"]);
+       if(cache !== error.response.headers["retry-after"]){
+            flag= true;
+            cache = error.response.headers["retry-after"];
+       }
        //if(serverSocket && body.headers["cf-cache-status"] == "HIT"){
        if(serverSocket){
          serverSocket.emit('notice', {
@@ -70,10 +74,7 @@ function upbitRequest(){
      }).catch(function (error) {
         console.log('error',error.response.headers["retry-after"]);
         if(error.response.headers["retry-after"]){
-          if(cache != error.response.headers["retry-after"]){
-            flag= true;
-            cache = error.response.headers["retry-after"];
-          }
+          
           undefined_count = 0;
           if(err == false){
             err = true;
