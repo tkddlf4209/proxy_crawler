@@ -60,8 +60,12 @@ function upbitRequest(){
        }
      }).then(function (body) {
        console.log(body.headers["cf-cache-status"],cache);
+    console.log('test1',body.headers["cf-cache-status"],cache);
        if(body.headers["retry-after"]){
+    console.log('test2',body.headers["cf-cache-status"],cache);
           if(cache != body.headers["retry-after"]){
+            
+    console.log('test3',body.headers["cf-cache-status"],cache);
             flag= true;   
           }
           cache = body.headers["retry-after"]
