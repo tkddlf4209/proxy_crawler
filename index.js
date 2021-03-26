@@ -1,47 +1,3 @@
-// var bodyParser = require('body-parser');
-// var express = require('express');
-// var app = express();
-// var util = require('util');
-// var axios = require('axios').default;
-// var bodyParser = require('socket.io-client');
-
-// app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-// app.use(bodyParser.json({type: 'application/json'}));
-// app.get('/', function (req, res) {
-//   res.send('Bitpump Cralwer Server :)');
-// });
-// var flag = true;
-// var time_stamp = getTimeMilis();
-// app.get('/upbit_project', function (req, res) {
-  
-//   if(flag){
-//      time_stamp = getTimeMilis();
-//   }
-//   flag = !flag;
-  
-//   var url = util.format("https://project-team.upbit.com/api/v1/disclosure?region=kr&per_page=5&bitpump=%s", time_stamp)
-  
-//   //console.log('url',  req.body.url); 
-//   //if (!!req.body.url) {
-//     axios({
-//         method: 'get',
-//         url:url,
-//         headers:{
-//                   'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36',
-//                   'Cache-Control': 'private,no-cache, no-store, must-revalidate,max-age=0,s-maxage=0,min-fresh=0 ,proxy-revalidate, max-stale=0, post-check=0, pre-check=0',
-//                   'Pragma': 'no-cache',
-//                   'Expires': '-1'
-//         }
-//       }).then(function (body) {
-//         console.log("Success",body.headers);
-//         res.status(200).send(body.data);
-//       }).catch(function (error) {
-//         console.log("error",req.body.url);
-//         res.status(404).send(error.message);
-//       })
-//   //}
-// });
-
 var axios = require('axios').default;
 var util = require('util');
 
@@ -52,8 +8,6 @@ function getTimeMilis() {
   return new Date().getTime();
 }
 
-var flag = true;
-var time_stamp = getTimeMilis();
 var err = false;
 upbitRequest();
 var crawl_delay = randDelay(500,5000);
@@ -83,11 +37,16 @@ function startUpbitProjectCrawler(interval){
 }
 var send_fail_flag = true;
 var undefined_count = 0;
+var flag = true;
+var cache = undefined;
+var time_stamp = getTimeMilis();
 function upbitRequest(){
   if(flag){
     time_stamp = getTimeMilis();
+    flag = false;
+    console.log('flag@@ ',time_stamp);
   }
-  flag = !flag;
+  //flag = !flag;
   var url = util.format("https://project-team.upbit.com/api/v1/disclosure?region=kr&per_page=20&bitpump=%s", time_stamp)
  
   axios({
@@ -111,6 +70,11 @@ function upbitRequest(){
      }).catch(function (error) {
         console.log('error',error.response.headers["retry-after"]);
         if(error.response.headers["retry-after"]){
+          if(cache && cache !== error.response.headers["retry-after"]){
+            flag= true;
+          }else{
+            cache = error.response.headers["retry-after"];
+          }
           undefined_count = 0;
           if(err == false){
             err = true;
