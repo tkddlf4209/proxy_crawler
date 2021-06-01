@@ -118,7 +118,7 @@ function requestUpbitNotice(){
   }).then(function (response) {
     if(response.data && serverSocket){
        serverSocket.emit('upbit_notice', response.data);
-       console.log(response.data.data.size());
+       console.log('upbit_notice');
     }
   }).catch(function (error) {
     if(notice_err == false){
