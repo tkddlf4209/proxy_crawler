@@ -9,44 +9,20 @@ function getTimeMilis() {
 }
 
 var err = false;
-upbitRequest();
-var crawl_delay = randDelay(500,5000);
-var restart_delay = randDelay(4000,7000);
-setTimeout(function(){ // 랜덤 딜레이 이후 실행
-  setInterval(function(){ // 1초 간격으로 프로젝트 공지 갱신
-    upbitRequest();
-  },1000)
-},crawl_delay);
+var start_crawler = false;
+// upbitRequest();
+// var crawl_delay = randDelay(500,5000);
+// var restart_delay = randDelay(4000,7000);
+// setTimeout(function(){ // 랜덤 딜레이 이후 실행
+//   setInterval(function(){ // 1초 간격으로 프로젝트 공지 갱신
+//     upbitRequest();
+//   },1000)
+// },crawl_delay);
 
-
-var slow_cralwer;
-function startUpbitProjectCrawler(interval){
-  if(start_crawler){ 
-    console.log('#STOP slow cralwer#');
-    clearInterval(slow_cralwer); 
-    upbitRequest(); // start immediately once
-    setInterval(function(){
-      upbitRequest();
-    },interval)
-  }else{// gateway에서 시작요청을 하지않았을 경우 
-    console.log('#START slow cralwer#');
-    slow_cralwer = setInterval(function(){
-      upbitRequest();
-    },interval)
-  }
-}
-var send_fail_flag = true;
 var undefined_count = 0;
-var flag = true;
-var cache = "MISS";
 var time_stamp = getTimeMilis();
 function upbitRequest(){
   time_stamp = getTimeMilis();
-//   if(flag){
-//     time_stamp = getTimeMilis();
-//     flag = false;
-//   }
-  //flag = !flag;
   var url = util.format("https://project-team.upbit.com/api/v1/disclosure?region=kr&per_page=20&bitpump=%s", time_stamp)
  
   axios({
@@ -101,7 +77,6 @@ function upbitRequest(){
                 },10000) // 만약 앱이 재실행되지 않으면 // 10초에 한번씩 앱 재실행 
               }
           }
-          
         }
     })
 }
@@ -132,13 +107,43 @@ var socket = io(url, {
     }
 });
 
-var start_crawler = false;
+
+var notice_err = false;
+function requestUpbitNotice(){
+  var url = "https://api-manager.upbit.com/api/v1/notices?page=1&per_page=1&bitpump=" + Date.now();
+  axios({
+    method: 'get',
+    url: url,
+    timeout: 1500
+  }).then(function (response) {
+    if(response.data && serverSocket){
+       serverSocket.emit('upbit_notice', response.data);
+    }
+  }).catch(function (error) {
+
+    if(notice_err == false){
+      notice_err = true;
+
+      selfRestart();
+      setInterval(function(){ 
+        if(err){
+          selfRestart(); // 에러발생시 재실행
+        }
+      },10000)  // 만약 앱이 재실행되지 않으면 // 10초에 한번씩 앱 재실행 
+    }
+    console.log('upbit crawler error@', error.response.headers['retry-after']);
+  })
+}
+
+
+setInterval(()=>{
+  requestUpbitNotice();
+},400);
 const socketSubscribe = (socket, app) => {
 
   //socket.removeAllListeners();
 
   // socket.on('start_crawler', function (data) {
-    
   //   if(!start_crawler){
   //     start_crawler = true;
   //     console.log("start_crawler#####",data);
@@ -155,10 +160,12 @@ const socketSubscribe = (socket, app) => {
 
   socket.on('disconnect', function () {
       console.log('disconnect');
+      serverSocket = undefined;
   });
 
   socket.on('reconnect', function () {
       console.log('reconnect');
+      serverSocket = socket;
   });
 
   socket.on("reconnecting", function (delay, attempt) {
@@ -187,7 +194,6 @@ function selfRestart() {
         console.log(error);
       }
   });
-
 }
 
 function randDelay(start, end)
